@@ -1,0 +1,173 @@
+<body class="min-h-screen gradient-bg">
+  <!-- Left Logo -->
+  <div class="w-full gradient-bg py-4 px-6 fixed top-0 left-0 z-50">
+  
+    <a href="/" class="top-6 left-6 text-2xl font-bold text-gray-800 tracking-tight hover:text-blue-600 transition-colors duration-200 z-50">
+  Beekon
+</a></div>
+  <div class="container mx-auto p-4 md:p-8 max-w-4xl mt-10">
+    <ng-container *ngIf="beacon">
+      <!-- Page Title Section -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div class="text-center mb-10">
+          <h1 class="text-2xl font-bold text-gray-800 mb-2">{{isEdit?'Edit':'Create'}} Beacon</h1>
+          <p class="text-gray-600">{{isEdit?'Edit':'Set'}} Title, description and flags for your beacon</p>
+        </div>
+        <form [formGroup]="beaconForm" (ngSubmit)="saveBeaconDetails()" class="beacon-form">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Beacon Name <span class="text-red-500">*</span></label>
+              <input type="text" formControlName="name" placeholder="Beacon name" 
+                class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+              <div *ngIf="beaconForm.get('name')?.hasError('required')" class="text-red-500 text-sm mt-1">
+                Beacon name is required
+              </div>
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Beacon Description</label>
+              <input type="text" formControlName="description" placeholder="What this beacon is about" 
+                class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+              
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Custom Beacon alias </label>
+               <input type="text" formControlName="slug" placeholder="URL to see your Beacon" 
+                class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+              
+            </div>
+            
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">Custom Image URL</label>
+              <input type="text" formControlName="url" placeholder="Personalize your Beacon" 
+                class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+              
+            </div>
+          </div>
+
+
+          
+        </form>
+      <!-- Add New Flag Form -->
+      <div class="bg-white rounded-xl p-6 m-6  border border-gray-300">
+        
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Flags <span class="text-red-500">*</span></h3>
+        <div class="space-y-4">
+          <div *ngFor="let flag of beacon?.flags" class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-lg font-semibold text-gray-800">{{flag.name}}</h4>
+              <button (click)="removeFlag(beacon.id, flag.id)" 
+                class="text-red-500 hover:text-red-700 transition-colors duration-200">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            <p class="text-gray-600 mb-1">Type: {{flag.type}}</p>
+            <p *ngIf="flag.type === 'dropdown'" class="text-gray-600">
+              Options: {{flag.options}}
+            </p>
+          </div>
+        </div>
+        
+        <button *ngIf="!isFormVisible" (click)="toggleForm()" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 mt-6 rounded-lg shadow-md transition-colors duration-200 flex items-center">
+          Add a new Flag
+        </button>
+      <form *ngIf="isFormVisible" [formGroup]="flagForm" (ngSubmit)="onSubmit()" class="flag-form mt-6 border-l-4 border-blue-500 pl-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Flag Name</label>
+            <input type="text" formControlName="name" placeholder="Enter flag name" 
+              class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+            <div *ngIf="flagForm.get('name')?.hasError('required')" class="text-red-500 text-sm mt-1">
+              Flag name is required
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Flag Type</label>
+            <select formControlName="type" 
+              class="block appearance-none w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+              <option *ngFor="let type of flagTypes" [value]="type">{{type}}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Options Field (for Dropdown type) -->
+        <div *ngIf="showOptions" class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2">Options</label>
+          <input type="text" formControlName="options" placeholder="Enter comma-separated options"
+            class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+          <p class="text-gray-500 text-sm mt-1">Enter options separated by commas (e.g., option1, option2, option3). First value will be taken as the default value.</p>
+        </div>
+
+        <!-- Initial Value Field -->
+        <div class="mb-6">
+          <label class="block text-gray-700 font-medium mb-2">Initial Value</label>
+          <ng-container [ngSwitch]="selectedType">
+            <!-- Boolean -->
+            <select *ngSwitchCase="'boolean'" formControlName="initialValue"
+              class="block appearance-none w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+              <option value="true">True</option>
+              <option value="false" selected>False</option>
+            </select>
+
+            <!-- Number -->
+            <input *ngSwitchCase="'number'" type="number" formControlName="initialValue"
+              class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+              <input *ngSwitchCase="'counter'" type="number" formControlName="initialValue"
+              class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+
+            <!-- String -->
+            <input *ngSwitchCase="'string'" type="text" formControlName="initialValue"
+              class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+
+            <!-- List -->
+            <div *ngSwitchCase="'list'">
+              <input type="text" formControlName="initialValue" placeholder="Enter comma-separated values"
+                class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+              <p class="text-gray-500 text-sm mt-1">Enter values separated by commas</p>
+            </div>
+
+            </ng-container>
+        </div>
+
+        <div class="flex justify-center">
+          <button type="submit" [disabled]="!flagForm.valid"
+            class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center">
+            <i class="fas fa-plus mr-2"></i>
+            Add Flag
+          </button>
+        </div>
+      </form>
+      </div>
+
+    </div>
+  
+
+      <!-- Back to Update Button -->
+      <div class="flex justify-center">
+        <button (click)="saveBeacon()" [disabled]="isHoistDisabled() || loading"
+          class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center relative">
+          <span *ngIf="!loading">Hoist Your Beacon <i class="fas fa-arrow-right mr-2"></i></span>
+          <span *ngIf="loading" class="flex items-center justify-center">
+            <span class="loader mr-2"></span> Hoisting...
+          </span>
+        </button>
+      </div>
+
+    </ng-container>
+  </div>
+</body>
+<style>
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>

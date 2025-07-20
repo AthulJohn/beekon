@@ -1,0 +1,59 @@
+<body class="min-h-screen gradient-bg">
+  <!-- Left Logo -->
+  <div class="w-full gradient-bg py-4 px-6 fixed top-0 left-0 z-50">
+
+    <a href="/"
+      class="top-6 left-6 text-2xl font-bold text-gray-800 tracking-tight hover:text-blue-600 transition-colors duration-200 z-50">
+      Beekon
+    </a>
+  </div>
+  <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6 relative mt-10" *ngIf="beacon">
+
+      <img 
+    *ngIf="beacon.brandUrl" 
+    [src]="beacon.brandUrl" 
+    alt="Beacon Image" 
+    class="w-full h-48 object-cover rounded-lg mb-5"
+  />
+
+      <div class="flex justify-between items-start mb-5">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ beacon.title || 'Untitled Beacon' }}</h1>
+          <p class="text-gray-600">{{ beacon.description || '' }}</p>
+        </div>
+      </div>
+      <div *ngFor="let flag of getFlags()" class="flag-item">
+          <div class="flag-content mt-5">
+
+            <mat-divider></mat-divider>
+            <!-- Boolean Flag -->
+            <h2 class="text-l font-semibold text-gray-600 text-center mb-3 mt-5">{{flag.name}}</h2>
+              
+            <div *ngIf="flag.type === 'boolean'">
+
+              <div class="flex items-center justify-center space-x-6 mb-8">
+                <span id="left-label" class="toggle-text text-gray-600 text-lg font-medium">Monthly</span>
+
+                <div class="visual-toggle mx-4">
+                  <div class="toggle-knob" [ngClass]="{'active' : flag.value}"></div>
+                </div>
+
+                <span id="right-label" class="toggle-text text-gray-600 text-lg font-medium">Yearly</span>
+              </div>
+            </div>
+
+            <div *ngIf="flag.type !== 'boolean'">
+              <h3 class="font-semibold text-gray-800 text-center mb-3" [ngClass]="flag.type=='number'||flag.type =='counter'? 'text-4xl':'text-2xl'">{{flag.value}}</h3>
+            
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="getFlags().length === 0" class="no-flags">
+          <p>No flags available.</p>
+        </div>
+    </div>
+  </div>
+</body>

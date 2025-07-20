@@ -1,0 +1,238 @@
+<!-- <div class="container" *ngIf="beacon$ | async as beacon">
+  <mat-card class="beacon-card">
+    <mat-card-header>
+      <mat-card-title>Update Beacon</mat-card-title>
+      <mat-card-subtitle>Manage your beacon flags</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="url-section">
+        <h3>View URL</h3>
+        <div class="url-controls">
+          <mat-form-field appearance="outline" class="slug-input">
+            <mat-label>Custom Slug</mat-label>
+            <input matInput [formControl]="slugControl" placeholder="Enter custom slug">
+            <button mat-icon-button matSuffix (click)="updateSlug(beacon.id)">
+              <mat-icon>save</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="view-url">
+            <mat-label>Public View URL</mat-label>
+            <input matInput [value]="viewUrl" readonly>
+            <button mat-icon-button matSuffix (click)="copyViewUrl()">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="flags-section">
+        <div class="flags-header">
+          <h3>Flags</h3>
+          <button mat-raised-button color="primary" (click)="navigateToEdit(beacon.id)">
+            <mat-icon>edit</mat-icon>
+            Edit Flags
+          </button>
+        </div>
+
+        <mat-list *ngIf="beacon.flags.length > 0">
+          <mat-list-item *ngFor="let flag of beacon.flags" class="flag-item">
+            <div class="flag-content">
+              <span class="flag-name">{{flag.name}}</span>
+=
+              <mat-slide-toggle *ngIf="flag.type === 'boolean'"
+                [checked]="flag.value"
+                (change)="updateFlagValue(beacon.id, flag, $event)">
+                {{flag.value ? 'Enabled' : 'Disabled'}}
+              </mat-slide-toggle>
+
+              <mat-form-field *ngIf="flag.type === 'number'" appearance="outline">
+                <input matInput type="number" [value]="flag.value"
+                  (change)="updateFlagValue(beacon.id, flag, $event)">
+              </mat-form-field>
+
+              <mat-form-field *ngIf="flag.type === 'string'" appearance="outline">
+                <input matInput [value]="flag.value"
+                  (change)="updateFlagValue(beacon.id, flag, $event)">
+              </mat-form-field>
+
+              <mat-form-field *ngIf="flag.type === 'dropdown' && flag.options" appearance="outline">
+                <mat-select [value]="flag.value"
+                  (selectionChange)="updateFlagValue(beacon.id, flag, $event)">
+                  <mat-option *ngFor="let option of flag.options" [value]="option">
+                    {{option}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field *ngIf="flag.type === 'list'" appearance="outline">
+                <input matInput [value]="flag.value?.join(', ')"
+                  placeholder="Comma-separated values"
+                  (change)="updateFlagValue(beacon.id, flag, $event)">
+                <mat-hint>Enter values separated by commas</mat-hint>
+              </mat-form-field>
+            </div>
+          </mat-list-item>
+        </mat-list>
+
+        <div *ngIf="beacon.flags.length === 0" class="no-flags">
+          <p>No flags added yet. Click 'Edit Flags' to add some!</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> -->
+<body class="min-h-screen gradient-bg">
+      <!-- Left Logo -->
+      <div class="w-full gradient-bg py-4 px-6 fixed top-0 left-0 z-50">
+  
+      <a href="/" class="top-6 left-6 text-2xl font-bold text-gray-800 tracking-tight hover:text-blue-600 transition-colors duration-200 z-50">
+    Beekon
+</a></div>
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl mt-10">
+        <ng-container *ngIf="beacon">
+        <!-- URL Section
+        <div class="flex justify-end items-center mb-6">
+          <div class="bg-white rounded-lg shadow-md p-3 flex items-center">
+            <span class="text-blue-600 font-medium mr-2 truncate max-w-xs">{{ viewUrl }}</span>
+            <button (click)="copyViewUrl()" class="text-blue-500 hover:text-blue-700 mx-2">
+              <i class="fas fa-copy"></i>
+            </button>
+            <button class="text-blue-500 hover:text-blue-700">
+              <i class="fas fa-edit"></i>
+            </button>
+          </div>
+
+        <!-- Title and Body Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6 relative mt-10">
+          <div class="flex justify-between items-start">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ beacon.title || 'Untitled Beacon' }}</h1>
+              <p class="text-gray-600">{{ beacon.description || '' }}</p>
+            </div>
+            
+          <div class="flex justify-center mb-6">
+            <button class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center" (click)="navigateToEdit()">
+                <i class="fas fa-edit mr-2"></i>
+                Edit Beacon/Flags
+            </button>
+        </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">URLs</h2>
+          <div class="space-y-6">
+            <!-- Update URL -->
+            <div>
+              <div class="text-gray-700 font-medium mb-1">Update URL</div>
+              <div class="text-gray-500 text-sm mb-2">
+                Save this URL securely. You will need it to update or manage your beacon in the future.
+              </div>
+              <div class="flex">
+                <input 
+                  class="h-10 flex-1 bg-gray-100 border border-gray-300 text-blue-700 font-mono px-3 rounded-l-lg focus:outline-none cursor-default" 
+                  [value]="getUpdateUrl" 
+                  readonly 
+                  tabindex="-1"
+                  style="min-width: 0;"
+                />
+                <button 
+                  *ngIf="!confirmation.copyUpdate"
+                  class="h-10 bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-r-lg transition-colors duration-200 flex items-center justify-center"
+                  (click)="copyToClipboard(getUpdateUrl, 'copyUpdate')"
+                  title="Copy update URL"
+                  type="button"
+                >
+                  <i class="fas fa-copy"></i>
+                </button>
+                <span *ngIf="confirmation.copyUpdate" class="h-10 bg-green-500 text-white px-4 rounded-r-lg flex items-center justify-center font-semibold transition-colors duration-200">Copied!</span>
+              </div>
+              
+                
+            </div>
+            <!-- Share/View URL -->
+            <div>
+              <div class="text-gray-700 font-medium mb-1">Shareable URL</div>
+              <div class="text-gray-500 text-sm mb-2">
+                Share this link with others to let them view your beacon.
+              </div>
+              <div class="flex">
+                <input 
+                  class="flex-1 bg-gray-100 border border-gray-300 text-blue-700 font-mono px-3 py-2 rounded-l-lg focus:outline-none cursor-default" 
+                  [value]="getSlugUrl" 
+                  readonly 
+                  tabindex="-1"
+                  style="min-width: 0;"
+                />
+                <button 
+                  *ngIf="!confirmation.copyShare"
+                  class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 transition-colors duration-200 flex items-center rounded-r-lg"
+                  (click)="copyToClipboard(getSlugUrl, 'copyShare')"
+                  title="Copy shareable URL"
+                  type="button"
+                >
+                  <i class="fas fa-copy"></i>
+                </button>
+                <span *ngIf="confirmation.copyShare" class="bg-green-500 text-white px-4 py-2 rounded-r-lg flex items-center font-semibold transition-colors duration-200">Copied!</span>
+                <button 
+                  *ngIf="!confirmation.share"
+                  class="ml-2 bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-lg border border-blue-300 transition-colors duration-200 flex items-center"
+                  (click)="shareText()"
+                  title="Share this URL"
+                  type="button"
+                >
+                  <i class="fas fa-share mr-2"></i>
+                  Share
+                </button>
+                <span *ngIf="confirmation.share" class="ml-2 bg-green-100 text-green-700 px-4 py-2 rounded-lg border border-green-300 flex items-center font-semibold transition-colors duration-200">Shared!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Flags Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 overflow-y-auto scrollable-section" style="max-height: 60vh;">
+          
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Flags</h2>
+          <div *ngIf="beacon.flags && beacon.flags.length > 0">
+          <div >
+            <div *ngFor="let flag of beacon.flags" class="mb-6">
+              <label class="block text-gray-700 font-medium mb-2">{{ flag.name }}</label>
+              <ng-container [ngSwitch]="flag.type">
+                <mat-slide-toggle *ngSwitchCase="'boolean'" [checked]="flag.value" (change)="updateFlagValue(beacon.id, flag, $event)">
+                  {{ flag.value ? 'Enabled' : 'Disabled' }}
+                </mat-slide-toggle>
+                <input *ngSwitchCase="'number'" type="number" class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500" [value]="flag.value" (change)="updateFlagValue(beacon.id, flag, $event)">
+                <input *ngSwitchCase="'string'" type="text" class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500" [value]="flag.value" (change)="updateFlagValue(beacon.id, flag, $event)">
+                <select *ngSwitchCase="'dropdown'" class="block appearance-none w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500" [value]="flag.value" (change)="updateFlagValue(beacon.id, flag, $event)">
+                  <option *ngFor="let option of flag.options" [value]="option">{{ option }}</option>
+                </select>
+                <input *ngSwitchCase="'list'" type="text" class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500" [value]="flag.value?.join(', ')" placeholder="Comma-separated values" (change)="updateFlagValue(beacon.id, flag, $event)">
+              </ng-container>
+            </div>
+          </div>
+          <ng-template #noFlags>
+            <div class="text-gray-500 text-center py-4">No flags added yet.</div>
+          </ng-template>
+          <div class="flex justify-end mb-6">
+            <button *ngIf="!confirmation.save" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center" (click)="saveFlags()">
+                <ng-container>
+                  <i class="fas fa-edit mr-2"></i>
+                  Save Flags
+                </ng-container>
+                </button><span *ngIf="confirmation.save" class="bg-green-500 text-white px-4 py-3 rounded-lg flex items-center font-semibold transition-colors duration-200">Saved!</span>
+            
+        </div>
+        
+    </div>
+        <div *ngIf="!beacon.flags || beacon.flags.length == 0" class="flex justify-center mb-6">
+          <button class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-colors duration-200 flex items-center" (click)="navigateToEdit()">
+              <i class="fas fa-plus mr-2"></i>
+              Create a New Flag
+          </button>
+      </div>
+        </div>
+    </ng-container>
+    </div>
+</body>

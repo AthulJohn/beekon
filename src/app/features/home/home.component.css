@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f8fafc;
+}
+
+.mountain-bg {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.mountain-peak {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(to right, #1e293b, #0f172a);
+  clip-path: polygon(
+      0% 100%, 
+      10% 70%, 
+      20% 85%, 
+      30% 60%, 
+      40% 90%, 
+      50% 50%, 
+      60% 80%, 
+      70% 40%, 
+      80% 75%, 
+      90% 30%, 
+      100% 100%
+  );
+}
+
+.beacon-light {
+  position: absolute;
+  bottom: 20vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  background: linear-gradient(to top, #fef08a80, #f59e0bb0);
+  border-radius: 4px;
+  box-shadow: 
+      0 0 20px 5px rgba(254, 240, 138, 0.8),
+      0 0 40px 10px rgba(254, 240, 138, 0.6);
+  animation: pulse 3s infinite;
+  z-index: 5;
+}
+
+.beacon-rays {
+  position: absolute;
+  bottom:60vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60vh;
+  height: 60vh;
+  background: radial-gradient(circle at center, 
+      rgba(254, 240, 138, 0.8) 0%, 
+      rgba(254, 240, 138, 0.5) 30%,
+      rgba(254, 240, 138, 0.2) 60%,
+      rgba(254, 240, 138, 0) 100%);
+  animation: pulse-rays 3s infinite;
+  z-index: 12;
+  border-radius: 50%;
+}
+
+@keyframes pulse-rays {
+  0% { transform: translateX(-50%) scale(0); opacity: 0.0; }            
+  50% { transform: translateX(-50%) scale(0); opacity: 0.0; }
+  80% { transform: translateX(-50%) scale(1.6); opacity: 1; }
+  100% { transform: translateX(-50%) scale(2); opacity: 0; }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.8; height: 0vh; }
+  80% { opacity: 1; height: 70vh; }
+  100% { opacity: 0; height: 70vh; }
+}
+
