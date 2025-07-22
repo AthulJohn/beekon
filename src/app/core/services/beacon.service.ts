@@ -283,7 +283,6 @@ export class BeaconService {
 
   private generateFlagId():number{
     const currentBeacon=this.getStrictBeacon();
-    console.log(Math.max(...currentBeacon.flags.map(f => f.id))+1)
     return Math.max(...currentBeacon.flags.map(f => f.id))+1;
   }
 

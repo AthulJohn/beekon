@@ -15,6 +15,10 @@ export const routes: Routes = [
     redirectTo: 'home',
   },
   {
+    path: 'view',
+    redirectTo: 'home',
+  },
+  {
     path:'create/:id',
     loadChildren:() => import('./features/edit/edit.module').then(m => m.EditModule),
     data: { mode: 'create' } 
